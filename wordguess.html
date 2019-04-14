@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Colbert Word Guess</title>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light static-top mb-5 shadow">
+        <div class="container">
+                <a class="navbar-brand" href="#">Colbert Word Guess!</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                                <p id="guessCount" class="nav-link">Guesses Left: 
+                                    <span class="sr-only">(current)</span>
+                                </p>
+                            </li>
+                            <li class="nav-item active">
+                                <p id="winsCount" class="nav-link">Wins: </p>
+                            </li>
+                            <li class="nav-item active">
+                                <p id="lossesCount" class="nav-link">Losses: </p>
+                            </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="card border-0 shadow my-5 background">
+            <div class="card-body p-5">
+                <div class="row">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                    </div>
+                    <div class="col-4">
+                    </div>
+                    <div class="col-4 card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h6 class="card-subtitle" id="game" class="lead">press any key to start playing</h6>
+                            <br>
+                            <h6 class="card-subtitle" id="guesses" class="lead">[]</h6>
+                            <br>
+                    <br>
+                    <br>
+                    <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script type="text/javascript">
+        //definetly lost track of what my variables did, for instance guessWord doesnt really do anything but breaks everything when removed. any advice on preventing this in the future would be appreciated
+        var gameState = 0
+        var losses = 0;
+        var wins = 0;
+        var userGuess = [];
+        var wordOfInterest = "";
+        var input = "";
+        var guessCount = 9;
+        var guessWord = [];
+        //sorry 4 t-swift reference
+        var blankSpace = [];
+        var colbertWords = ["truthiness", "gut", "america", "democracy", "decider", "hero"]
+        var gameOutput = document.getElementById("game");
+        //I don't have an mp3 to put here but with an audio.play() in the winCheck function this is how I would make music play
+        var audio = new Audio('audio_file.mp3');
+        //press any button to begin
+        document.onkeyup = function (event) {
+            //if statment to begin game
+            if (gameState === 0) {
+                reset();
+            }
+            else {
+                //adds to user guesses
+                input = event.key.toLowerCase();
+                //something here to prevent user from guessing numbers or other keys, I couldnt figure out how to do this
+                guessChecker(input, userGuess);
+                console.log(userGuess);
+                console.log(wordOfInterest);
+            }
+        }
+        //resets the game
+        function reset() {
+                wordOfInterest = colbertWords[(Math.floor(Math.random() * colbertWords.length))];
+                console.log(gameState);
+                blankSpace = [];
+                for (i = 0; i < wordOfInterest.length; i++) {
+                    blankSpace.push("_")
+                }
+                gameOutput.innerHTML = blankSpace.join(" ");
+                console.log(wordOfInterest);
+                guessWord.push(wordOfInterest);
+                guessCount = 9;
+                document.getElementById("guessCount").innerHTML = "Guesses Left: " + guessCount;
+                userGuess = [];
+                document.getElementById("guesses").innerHTML = "[]";
+                gameState++;
+            }
+
+       
+        //checks user guesses against existing guesses
+        function guessChecker(x, arr) {
+            if (arr.includes(x)) {
+                alert("please select a new letter")
+            }
+            else {
+                userGuess.push(x);
+                document.getElementById("guesses").innerHTML = "[ " + userGuess.join(" ") + " ]";
+                guessCount--
+                document.getElementById("guessCount").innerHTML = "Guesses Left: " + guessCount;
+                wordChecker(input, wordOfInterest)
+                winCheck(); 
+                lossCheck();
+            };
+        };
+        //checks validated user guesses against wordOfInterest
+        function wordChecker(x, arr){
+            for(var i = 0; i < arr.length; i++){
+                if(x == arr.charAt(i)){
+                    blankSpace[i] = x
+                    console.log(blankSpace);
+                    gameOutput.innerHTML = blankSpace.join(" ");
+                };
+            };
+        };
+
+        //checks loss condition and resets if it is met
+        var lossCheck = function(){
+            if(guessCount=== 0){
+                losses++;
+                document.getElementById("lossesCount").innerHTML = "Losses: " + losses;
+                console.log("losses" + losses);
+                reset();
+            }
+        }
+
+        //checks win condition and resets if it is met'
+        var winCheck = function(){
+            if (blankSpace.indexOf("_") === -1){
+                wins++;
+                document.getElementById("winsCount").innerHTML = "Wins: " + wins;
+                audio.play();
+                console.log("wins:" + wins);
+                reset();
+            }
+        }
+
+    
+
+    //var wordlength = array
+
+    //var words = array
+
+    //var userguess = array of user inputs
+
+    //var wins tracks won user rounds
+
+    //var losses tracks lost user rounds
+
+    //onkeyup event to trigger below ifs/loops
+
+    //if statement in for loop to prevent multiple of the same input
+
+    //if statement in for loop to check user guess against var words
+
+
+    </script>
+</body>
+
+</html>
